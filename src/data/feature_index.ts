@@ -203,6 +203,15 @@ export class FeatureIndex {
         const sourceLayer = this.vtLayers[sourceLayerName];
         const feature = sourceLayer.feature(featureIndex);
 
+        for (const propName in feature.properties) {
+            const prop = feature.properties[propName];
+            if (typeof prop === 'string') {
+                try {
+                    feature.properties[propName] = JSON.parse(prop);
+                } catch (e) { /* empty */ }
+            }
+        }
+
         if (filter.needGeometry) {
             const evaluationFeature = toEvaluationFeature(feature, true);
             if (!filter.filter(new EvaluationParameters(this.tileID.overscaledZ), evaluationFeature, this.tileID.canonical)) {
